@@ -23,6 +23,16 @@ html, body {
   overflow: hidden;
 }
 
+/* Force bslib/Bootstrap wrappers to full height for vertical centering */
+body > .container-fluid,
+body > .container,
+body > div:first-child {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 /* ---------- Main Wrapper — centré vertical + horizontal ---------- */
 .main-wrapper {
   display: flex;
@@ -341,7 +351,7 @@ html, body {
   position: absolute;
   inset: 20px;
   z-index: 1;
-  opacity: 0.45;
+  opacity: 0.6;
   filter: blur(2px);
   display: flex;
   flex-direction: column;
