@@ -66,7 +66,7 @@ ui <- page_fixed(
 
         Cal.ns.discovery("ui", {
           "theme": "light",
-          "styles": { "branding": { "brandColor": "#007AFF" } },
+          "styles": { "branding": { "brandColor": "#8964c4" } },
           "hideEventTypeDetails": false,
           "layout": "month_view"
         });
@@ -76,7 +76,7 @@ ui <- page_fixed(
 
   useShinyjs(),
 
-  # -- Body : Layout deux colonnes --
+  # -- Body --
   div(
     class = "main-wrapper",
 
@@ -94,7 +94,7 @@ ui <- page_fixed(
         id = "step-2",
         class = "step",
         div(class = "step-number", "2"),
-        span("Réserver un créneau")
+        span(HTML("R\u00e9server un cr\u00e9neau"))
       )
     ),
 
@@ -126,33 +126,22 @@ ui <- page_fixed(
             textInput("entreprise", "Entreprise", placeholder = "Nom de votre entreprise", width = "100%")
           ),
 
+          # Champ email avec animation liseré tournant
           div(
-            class = "input-group",
-            textInput("email", "Email professionnel", placeholder = "jean@entreprise.com", width = "100%")
-          ),
-
-          div(
-            class = "input-group",
-            selectInput(
-              "besoin", "Votre besoin",
-              choices = c(
-                "Sélectionnez..." = "",
-                "Conseil & Stratégie Data",
-                "Développement Dashboard / App",
-                "Formation & Montée en compétences",
-                "Automatisation & IA",
-                "Autre"
-              ),
-              width = "100%"
+            class = "input-group input-group-email",
+            tags$label(`for` = "email", "Adresse mail"),
+            div(
+              class = "email-glow-wrapper",
+              textInput("email", label = NULL, placeholder = "jean@entreprise.com", width = "100%")
             )
           ),
 
-          actionButton("submit_btn", "Valider", class = "btn-ios", width = "100%")
-        ),
+          actionButton("submit_btn", "Valider", class = "btn-ios", width = "100%"),
 
-        div(
-          class = "panel-footer",
-          tags$p("Vos informations restent confidentielles.")
+          tags$p(
+            class = "legal-text",
+            "En envoyant ce formulaire, vous acceptez d\u2019\u00eatre recontact\u00e9 dans le cadre de notre offre."
+          )
         )
       ),
 
@@ -161,24 +150,28 @@ ui <- page_fixed(
         id = "cal-panel",
         class = "panel panel-cal",
 
-        # Overlay "remplissez le formulaire d'abord"
         div(
           id = "cal-overlay",
           class = "cal-overlay",
           div(
             class = "cal-overlay-content",
             HTML('<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#86868B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'),
-            tags$p("Veuillez remplir le formulaire pour accéder au calendrier.")
+            tags$p("Veuillez remplir le formulaire pour acc\u00e9der au calendrier.")
           )
         ),
 
-        # Cal.com inline embed
         div(
           id = "my-cal-inline",
           `data-cal-link` = CAL_LINK,
           `data-cal-namespace` = "discovery"
         )
       )
+    ),
+
+    # ===== Footer =====
+    div(
+      class = "app-footer",
+      tags$p(HTML('D\u00e9velopp\u00e9 avec \u2615 par <a href="https://www.linkedin.com/in/arsmouk-data-analyst/" target="_blank" rel="noopener">Abd Arsmouk</a>'))
     )
   )
 )
@@ -194,12 +187,10 @@ server <- function(input, output, session) {
 
   observeEvent(input$submit_btn, {
 
-    # -- Validation --
     errors <- c()
     if (nchar(trimws(input$nom)) == 0) errors <- c(errors, "Nom")
     if (nchar(trimws(input$entreprise)) == 0) errors <- c(errors, "Entreprise")
     if (!validate_email(input$email)) errors <- c(errors, "Email valide")
-    if (nchar(input$besoin) == 0) errors <- c(errors, "Besoin")
 
     if (length(errors) > 0) {
       showNotification(
@@ -210,32 +201,26 @@ server <- function(input, output, session) {
       return()
     }
 
-    # -- Envoi email (ne bloque pas l'UI) --
     tryCatch({
       source_python("send_mail.py")
       send_notification_email(
         nom        = input$nom,
         entreprise = input$entreprise,
-        email      = input$email,
-        besoin     = input$besoin
+        email      = input$email
       )
     }, error = function(e) {
       message("Erreur envoi email : ", e$message)
     })
 
-    # -- Transition directe vers le calendrier (pas de message intermédiaire) --
-
-    # 1. Masquer le formulaire
+    # Transition directe vers le calendrier
     shinyjs::hide(id = "form-panel", anim = TRUE, animType = "fade", time = 0.3)
 
-    # 2. Stepper : step 1 done, step 2 active
     shinyjs::runjs('
       document.getElementById("step-1").classList.remove("active");
       document.getElementById("step-1").classList.add("done");
       document.getElementById("step-2").classList.add("active");
     ')
 
-    # 3. Supprimer l'overlay + agrandir le panneau cal + charger l'embed
     delay(350, {
       shinyjs::runjs('
         document.getElementById("cal-overlay").style.display = "none";

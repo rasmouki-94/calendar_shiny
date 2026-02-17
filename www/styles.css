@@ -1,6 +1,6 @@
 /* ============================================
    Apple-style iOS Landing Page — styles.css
-   Layout : stepper + 2 panneaux côte à côte
+   Accent : #8964c4
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -23,13 +23,13 @@ html, body {
   overflow: hidden;
 }
 
-/* ---------- Main Wrapper ---------- */
+/* ---------- Main Wrapper — centré, taille réduite ---------- */
 .main-wrapper {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 20px 28px 16px;
-  max-width: 1200px;
+  padding: 20px 28px 12px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
@@ -39,7 +39,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   flex-shrink: 0;
 }
 
@@ -51,13 +51,8 @@ html, body {
   transition: opacity 0.3s ease;
 }
 
-.step.active {
-  opacity: 1;
-}
-
-.step.done {
-  opacity: 0.55;
-}
+.step.active { opacity: 1; }
+.step.done   { opacity: 0.55; }
 
 .step-number {
   width: 28px;
@@ -74,7 +69,7 @@ html, body {
 }
 
 .step.active .step-number {
-  background: #007AFF;
+  background: #8964c4;
   color: #FFFFFF;
 }
 
@@ -99,7 +94,7 @@ html, body {
 /* ---------- Panels Container ---------- */
 .panels-container {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 290px 1fr;
   gap: 16px;
   flex: 1;
   min-height: 0;
@@ -162,16 +157,6 @@ html, body {
   margin-bottom: 0;
 }
 
-.panel-footer {
-  margin-top: 10px;
-  text-align: center;
-}
-
-.panel-footer p {
-  font-size: 11px;
-  color: #C7C7CC;
-}
-
 /* ---------- Inputs ---------- */
 .shiny-input-container {
   width: 100% !important;
@@ -203,8 +188,8 @@ html, body {
 .shiny-input-container input[type="email"]:focus,
 .shiny-input-container select:focus,
 .shiny-input-container textarea:focus {
-  border-color: #007AFF;
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+  border-color: #8964c4;
+  box-shadow: 0 0 0 3px rgba(137, 100, 196, 0.15);
   background-color: #FFFFFF;
 }
 
@@ -214,11 +199,62 @@ html, body {
   font-weight: 400;
 }
 
-.shiny-input-container select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2386868B' d='M6 8.825L1.175 4 2.238 2.938 6 6.7 9.763 2.938 10.825 4z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+/* ---------- Email glow wrapper — spinning border ---------- */
+.email-glow-wrapper {
+  position: relative;
+  border-radius: 12px;
+  padding: 2px;
+  background: #F5F5F7;
+  overflow: hidden;
+}
+
+.email-glow-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    #8964c4 25%,
+    #b794e6 50%,
+    #8964c4 75%,
+    transparent 100%
+  );
+  animation: spinBorder 3s linear infinite;
+  z-index: 0;
+}
+
+.email-glow-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 10px;
+  background: #F5F5F7;
+  z-index: 1;
+}
+
+.email-glow-wrapper .shiny-input-container {
+  position: relative;
+  z-index: 2;
+}
+
+.email-glow-wrapper .form-control,
+.email-glow-wrapper input[type="text"] {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.email-glow-wrapper .form-control:focus,
+.email-glow-wrapper input[type="text"]:focus {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+@keyframes spinBorder {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 /* ---------- Submit Button ---------- */
@@ -232,7 +268,7 @@ html, body {
   font-weight: 600;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #FFFFFF;
-  background: linear-gradient(135deg, #007AFF 0%, #0055D4 100%);
+  background: linear-gradient(135deg, #8964c4 0%, #6b44a8 100%);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -243,12 +279,21 @@ html, body {
 
 .btn-ios:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(137, 100, 196, 0.35);
 }
 
 .btn-ios:active {
   transform: translateY(0);
   opacity: 0.85;
+}
+
+/* ---------- Legal text ---------- */
+.legal-text {
+  font-size: 10px;
+  color: #AEAEB2;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 2px;
 }
 
 /* ---------- Panel Cal (right) ---------- */
@@ -258,7 +303,6 @@ html, body {
   flex-direction: column;
 }
 
-/* Overlay : "fill out the form first" */
 .cal-overlay {
   position: absolute;
   inset: 0;
@@ -298,7 +342,7 @@ html, body {
   overflow: hidden;
 }
 
-/* After validation: cal panel takes full width */
+/* After validation: cal panel full width */
 .panel-cal-full {
   grid-column: 1 / -1;
   animation: fadeIn 0.4s ease;
@@ -307,6 +351,30 @@ html, body {
 @keyframes fadeIn {
   from { opacity: 0.6; }
   to   { opacity: 1; }
+}
+
+/* ---------- App Footer ---------- */
+.app-footer {
+  text-align: center;
+  padding: 8px 0 0;
+  flex-shrink: 0;
+}
+
+.app-footer p {
+  font-size: 11px;
+  color: #AEAEB2;
+  font-weight: 400;
+}
+
+.app-footer a {
+  color: #8964c4;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.app-footer a:hover {
+  opacity: 0.7;
 }
 
 /* ---------- Shiny Overrides ---------- */
@@ -331,6 +399,7 @@ html, body {
     height: auto;
     min-height: 100vh;
     padding: 16px;
+    max-width: 100%;
   }
 
   .panels-container {

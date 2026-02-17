@@ -13,7 +13,7 @@ import smtplib
 from email.message import EmailMessage
 
 
-def send_notification_email(nom: str, entreprise: str, email: str, besoin: str) -> None:
+def send_notification_email(nom: str, entreprise: str, email: str) -> None:
     gmail_user = os.getenv("GMAIL_USER")
     gmail_password = os.getenv("GMAIL_APP_PASSWORD")
     email_to = os.getenv("EMAIL_TO")
@@ -36,7 +36,6 @@ Nouveau prospect qualifié via la landing page.
 Nom        : {nom}
 Entreprise : {entreprise}
 Email      : {email}
-Besoin     : {besoin}
 --------------------------------------
 
 Ce prospect va maintenant choisir un créneau sur Cal.com.
