@@ -8,7 +8,7 @@ library(htmltools)
 # Configuration
 # ---------------------------------------------------------------------------
 # MODIFIE CE LIEN avec ton nom d'utilisateur Cal.com
-# Exemple : "https://cal.com/jean-dupont/discovery-call"
+# Exemple : "jean-dupont/discovery-call"
 CAL_LINK <- "rasmouki/secret"
 
 # ---------------------------------------------------------------------------
@@ -32,7 +32,7 @@ ui <- page_fixed(
     # Cal.com Embed — snippet officiel
     tags$script(
       type = "text/javascript",
-      HTML(sprintf('
+      HTML('
         (function (C, A, L) {
           let p = function (a, ar) { a.q.push(ar); };
           let d = C.document;
@@ -70,128 +70,113 @@ ui <- page_fixed(
           "hideEventTypeDetails": false,
           "layout": "month_view"
         });
-      ', CAL_LINK))
+      ')
     )
   ),
 
   useShinyjs(),
 
-  # -- Body --
+  # -- Body : Layout deux colonnes --
   div(
     class = "main-wrapper",
 
-    # ====== ÉTAT A : Formulaire ======
+    # ===== Stepper =====
     div(
-      id = "form-section",
-      class = "apple-card fade-in-up",
-
+      class = "stepper",
       div(
-        class = "page-header",
-        tags$h1("Réserver un Call Découverte"),
-        tags$p("Remplissez ce court formulaire pour accéder au calendrier.")
+        id = "step-1",
+        class = "step active",
+        div(class = "step-number", "1"),
+        span("Remplir le formulaire")
       ),
-
+      div(class = "step-divider"),
       div(
-        class = "form-section",
-
-        # Nom
-        div(
-          class = "input-group",
-          textInput(
-            inputId = "nom",
-            label = "Nom complet",
-            placeholder = "Jean Dupont",
-            width = "100%"
-          )
-        ),
-
-        # Entreprise
-        div(
-          class = "input-group",
-          textInput(
-            inputId = "entreprise",
-            label = "Entreprise",
-            placeholder = "Nom de votre entreprise",
-            width = "100%"
-          )
-        ),
-
-        # Email
-        div(
-          class = "input-group",
-          textInput(
-            inputId = "email",
-            label = "Email professionnel",
-            placeholder = "jean@entreprise.com",
-            width = "100%"
-          )
-        ),
-
-        # Besoin
-        div(
-          class = "input-group",
-          selectInput(
-            inputId = "besoin",
-            label = "Votre besoin",
-            choices = c(
-              "Sélectionnez..." = "",
-              "Conseil & Stratégie Data",
-              "Développement Dashboard / App",
-              "Formation & Montée en compétences",
-              "Automatisation & IA",
-              "Autre"
-            ),
-            width = "100%"
-          )
-        ),
-
-        # Bouton Valider
-        div(
-          actionButton(
-            inputId = "submit_btn",
-            label = "Valider et choisir un créneau",
-            class = "btn-ios",
-            width = "100%"
-          )
-        )
-      ),
-
-      div(
-        class = "page-footer",
-        tags$p("Vos informations restent confidentielles.")
+        id = "step-2",
+        class = "step",
+        div(class = "step-number", "2"),
+        span("Réserver un créneau")
       )
     ),
 
-    # ====== ÉTAT B : Succès + Cal.com ======
-    hidden(
-      div(
-        id = "cal-section",
-        class = "apple-card-wide",
+    # ===== Conteneur deux panneaux =====
+    div(
+      class = "panels-container",
 
-        # Message de succès (affiché brièvement)
+      # --- Panneau gauche : Formulaire ---
+      div(
+        id = "form-panel",
+        class = "panel panel-form",
+
         div(
-          id = "success-msg",
-          class = "success-container",
-          div(
-            class = "success-icon",
-            HTML('<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>')
-          ),
-          tags$h2("Merci !"),
-          tags$p("Choisissez maintenant un créneau qui vous convient.")
+          class = "panel-header",
+          tags$h2("Vos informations"),
+          tags$p("Pour mieux préparer notre échange.")
         ),
 
-        # Calendrier Cal.com
-        hidden(
+        div(
+          class = "form-section",
+
           div(
-            id = "cal-embed-wrapper",
-            div(
-              class = "cal-header",
-              tags$h2("Choisissez votre créneau"),
-              tags$p("Sélectionnez une date et une heure qui vous conviennent.")
-            ),
-            # MODIFIE "PLACEHOLDER_USER/discovery-call" avec ton lien Cal.com
-            div(id = "my-cal-inline", `data-cal-link` = CAL_LINK, `data-cal-namespace` = "discovery")
+            class = "input-group",
+            textInput("nom", "Nom complet", placeholder = "Jean Dupont", width = "100%")
+          ),
+
+          div(
+            class = "input-group",
+            textInput("entreprise", "Entreprise", placeholder = "Nom de votre entreprise", width = "100%")
+          ),
+
+          div(
+            class = "input-group",
+            textInput("email", "Email professionnel", placeholder = "jean@entreprise.com", width = "100%")
+          ),
+
+          div(
+            class = "input-group",
+            selectInput(
+              "besoin", "Votre besoin",
+              choices = c(
+                "Sélectionnez..." = "",
+                "Conseil & Stratégie Data",
+                "Développement Dashboard / App",
+                "Formation & Montée en compétences",
+                "Automatisation & IA",
+                "Autre"
+              ),
+              width = "100%"
+            )
+          ),
+
+          actionButton("submit_btn", "Valider", class = "btn-ios", width = "100%")
+        ),
+
+        div(
+          class = "panel-footer",
+          tags$p("Vos informations restent confidentielles.")
+        )
+      ),
+
+      # --- Panneau droit : Cal.com ---
+      div(
+        id = "cal-panel",
+        class = "panel panel-cal",
+
+        # Overlay "remplissez le formulaire d'abord"
+        div(
+          id = "cal-overlay",
+          class = "cal-overlay",
+          div(
+            class = "cal-overlay-content",
+            HTML('<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#86868B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'),
+            tags$p("Veuillez remplir le formulaire pour accéder au calendrier.")
           )
+        ),
+
+        # Cal.com inline embed
+        div(
+          id = "my-cal-inline",
+          `data-cal-link` = CAL_LINK,
+          `data-cal-namespace` = "discovery"
         )
       )
     )
@@ -203,14 +188,13 @@ ui <- page_fixed(
 # ---------------------------------------------------------------------------
 server <- function(input, output, session) {
 
-  # -- Validation simple --
   validate_email <- function(email) {
     grepl("^[\\w.+-]+@[\\w-]+\\.[\\w.]+$", email, perl = TRUE)
   }
 
-  # -- Soumission du formulaire --
   observeEvent(input$submit_btn, {
-    # Validation
+
+    # -- Validation --
     errors <- c()
     if (nchar(trimws(input$nom)) == 0) errors <- c(errors, "Nom")
     if (nchar(trimws(input$entreprise)) == 0) errors <- c(errors, "Entreprise")
@@ -226,42 +210,46 @@ server <- function(input, output, session) {
       return()
     }
 
-    # Envoi de l'email de notification (asynchrone, ne bloque pas l'UI)
+    # -- Envoi email (ne bloque pas l'UI) --
     tryCatch({
       source_python("send_mail.py")
       send_notification_email(
-        nom = input$nom,
+        nom        = input$nom,
         entreprise = input$entreprise,
-        email = input$email,
-        besoin = input$besoin
+        email      = input$email,
+        besoin     = input$besoin
       )
     }, error = function(e) {
       message("Erreur envoi email : ", e$message)
     })
 
-    # Transition vers l'état B
-    shinyjs::hide(id = "form-section", anim = TRUE, animType = "fade", time = 0.4)
+    # -- Transition directe vers le calendrier (pas de message intermédiaire) --
 
-    delay(450, {
-      shinyjs::show(id = "cal-section", anim = TRUE, animType = "fade", time = 0.5)
+    # 1. Masquer le formulaire
+    shinyjs::hide(id = "form-panel", anim = TRUE, animType = "fade", time = 0.3)
 
-      # Après 2s, masquer le message de succès et afficher le calendrier
-      delay(2000, {
-        shinyjs::hide(id = "success-msg", anim = TRUE, animType = "fade", time = 0.4)
-        delay(450, {
-          shinyjs::show(id = "cal-embed-wrapper", anim = TRUE, animType = "fade", time = 0.5)
+    # 2. Stepper : step 1 done, step 2 active
+    shinyjs::runjs('
+      document.getElementById("step-1").classList.remove("active");
+      document.getElementById("step-1").classList.add("done");
+      document.getElementById("step-2").classList.add("active");
+    ')
 
-          # Initialiser Cal.com inline embed
-          shinyjs::runjs(sprintf(
-            'Cal.ns.discovery("inline", {
-              elementOrSelector: "#my-cal-inline",
-              calLink: "%s",
-              layout: "month_view"
-            });',
-            CAL_LINK
-          ))
-        })
-      })
+    # 3. Supprimer l'overlay + agrandir le panneau cal + charger l'embed
+    delay(350, {
+      shinyjs::runjs('
+        document.getElementById("cal-overlay").style.display = "none";
+        document.getElementById("cal-panel").classList.add("panel-cal-full");
+      ')
+
+      shinyjs::runjs(sprintf(
+        'Cal.ns.discovery("inline", {
+          elementOrSelector: "#my-cal-inline",
+          calLink: "%s",
+          layout: "month_view"
+        });',
+        CAL_LINK
+      ))
     })
   })
 }
