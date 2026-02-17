@@ -110,7 +110,12 @@ ui <- page_fixed(
         div(
           class = "panel-header",
           tags$h2("Vos informations"),
-          tags$p("Pour mieux préparer notre échange.")
+          tags$ul(
+            class = "call-bullets",
+            tags$li("Analyse de vos besoins data"),
+            tags$li("Recommandations personnalisées"),
+            tags$li("Devis et planning sur mesure")
+          )
         ),
 
         div(
@@ -150,13 +155,36 @@ ui <- page_fixed(
         id = "cal-panel",
         class = "panel panel-cal",
 
+        # Fake calendar preview (blurred behind overlay)
+        div(
+          class = "cal-preview-shadow",
+          # Faux header mois
+          div(class = "cal-fake-header",
+            div(class = "cal-fake-nav"),
+            div(class = "cal-fake-month"),
+            div(class = "cal-fake-nav")
+          ),
+          # Faux jours de la semaine
+          div(class = "cal-fake-weekdays",
+            tags$span("L"), tags$span("M"), tags$span("M"),
+            tags$span("J"), tags$span("V"), tags$span("S"), tags$span("D")
+          ),
+          # Fausse grille de jours
+          div(class = "cal-fake-grid",
+            lapply(1:35, function(i) {
+              div(class = if (i %in% c(8, 15, 22)) "cal-fake-day highlight" else "cal-fake-day")
+            })
+          )
+        ),
+
+        # Overlay message
         div(
           id = "cal-overlay",
           class = "cal-overlay",
           div(
             class = "cal-overlay-content",
-            HTML('<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#86868B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'),
-            tags$p("Veuillez remplir le formulaire pour acc\u00e9der au calendrier.")
+            HTML('<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#8964c4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'),
+            tags$p("Remplissez le formulaire pour acc\u00e9der au calendrier.")
           )
         ),
 
@@ -224,6 +252,8 @@ server <- function(input, output, session) {
     delay(350, {
       shinyjs::runjs('
         document.getElementById("cal-overlay").style.display = "none";
+        var preview = document.querySelector(".cal-preview-shadow");
+        if (preview) preview.style.display = "none";
         document.getElementById("cal-panel").classList.add("panel-cal-full");
       ')
 

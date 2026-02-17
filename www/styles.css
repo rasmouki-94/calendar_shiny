@@ -23,14 +23,16 @@ html, body {
   overflow: hidden;
 }
 
-/* ---------- Main Wrapper — centré, taille réduite ---------- */
+/* ---------- Main Wrapper — centré vertical + horizontal ---------- */
 .main-wrapper {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  max-width: 880px;
+  max-height: 520px;
   height: 100vh;
-  padding: 20px 28px 12px;
-  max-width: 960px;
-  margin: 0 auto;
+  padding: 0 28px;
+  margin: auto;
 }
 
 /* ---------- Stepper ---------- */
@@ -39,7 +41,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   flex-shrink: 0;
 }
 
@@ -133,6 +135,36 @@ html, body {
   font-size: 13px;
   color: #86868B;
   line-height: 1.4;
+}
+
+/* Bullet points call description */
+.call-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.call-bullets li {
+  font-size: 12px;
+  color: #86868B;
+  line-height: 1.3;
+  padding-left: 16px;
+  position: relative;
+}
+
+.call-bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8964c4;
+  opacity: 0.6;
 }
 
 .form-section {
@@ -301,14 +333,80 @@ html, body {
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
+/* -- Fake blurred calendar preview -- */
+.cal-preview-shadow {
+  position: absolute;
+  inset: 20px;
+  z-index: 1;
+  opacity: 0.45;
+  filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cal-fake-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 8px;
+}
+
+.cal-fake-nav {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #E5E5EA;
+}
+
+.cal-fake-month {
+  width: 120px;
+  height: 16px;
+  border-radius: 4px;
+  background: #D1D1D6;
+}
+
+.cal-fake-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.cal-fake-weekdays span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #AEAEB2;
+}
+
+.cal-fake-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  flex: 1;
+}
+
+.cal-fake-day {
+  border-radius: 8px;
+  background: #F0F0F2;
+  min-height: 0;
+}
+
+.cal-fake-day.highlight {
+  background: rgba(137, 100, 196, 0.15);
+}
+
+/* -- Overlay on top of fake calendar -- */
 .cal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   z-index: 10;
   display: flex;
   align-items: center;
@@ -322,16 +420,16 @@ html, body {
 }
 
 .cal-overlay-content svg {
-  margin-bottom: 12px;
-  opacity: 0.5;
+  margin-bottom: 10px;
+  opacity: 0.7;
 }
 
 .cal-overlay-content p {
-  font-size: 15px;
-  color: #86868B;
+  font-size: 14px;
+  color: #6e6e73;
   font-weight: 500;
   line-height: 1.5;
-  max-width: 260px;
+  max-width: 240px;
 }
 
 /* Cal embed */
@@ -356,7 +454,7 @@ html, body {
 /* ---------- App Footer ---------- */
 .app-footer {
   text-align: center;
-  padding: 8px 0 0;
+  padding: 6px 0 0;
   flex-shrink: 0;
 }
 
@@ -397,9 +495,12 @@ html, body {
 
   .main-wrapper {
     height: auto;
+    max-height: none;
     min-height: 100vh;
     padding: 16px;
     max-width: 100%;
+    margin: 0 auto;
+    justify-content: flex-start;
   }
 
   .panels-container {
