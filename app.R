@@ -9,7 +9,7 @@ library(htmltools)
 # ---------------------------------------------------------------------------
 # MODIFIE CE LIEN avec ton nom d'utilisateur Cal.com
 # Exemple : "https://cal.com/jean-dupont/discovery-call"
-CAL_LINK <- "PLACEHOLDER_USER/discovery-call"
+CAL_LINK <- "rasmouki/secret"
 
 # ---------------------------------------------------------------------------
 # UI
