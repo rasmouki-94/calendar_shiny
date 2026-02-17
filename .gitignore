@@ -1,0 +1,17 @@
+# Credentials — ne jamais committer
+.env
+!.env.example
+
+# R
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
